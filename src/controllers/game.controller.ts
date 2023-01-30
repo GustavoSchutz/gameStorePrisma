@@ -3,7 +3,6 @@ import { newGameSchema } from '../schemas/schemas.js';
 import { Request, Response } from 'express';
 import httpStatus from 'http-status';
 import { ValidationResult } from 'joi';
-import { type } from 'os';
 
 
 async function newGame(req: Request, res: Response) {
@@ -104,7 +103,7 @@ async function getGameById(req: Request, res: Response) {
     try {
 
         const getGameById = await gameRepo.selectGame(gameId);
-        return res.status(httpStatus.OK).send(getGameById.rows);
+        return res.status(httpStatus.OK).send(getGameById);
 
     } catch (error) {
         console.log(error);

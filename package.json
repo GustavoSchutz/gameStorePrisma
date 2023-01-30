@@ -5,7 +5,8 @@
   "description": "",
   "main": "./dist/app.js",
   "scripts": {
-    "start": "node ./dist/app.js"
+    "start": "node ./dist/app.js",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",

@@ -13,7 +13,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (g && (g = 0, op[0] && (_ = 0)), _) try {
+        while (_) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -34,12 +34,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import { db } from "../db/db.js";
+import prisma from "../config/db.js";
 function insertGame(_a) {
     var name = _a.name, description = _a.description, release_date = _a.release_date;
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_b) {
-            return [2 /*return*/, db.query("INSERT INTO games (name, description, release_date)\n        VALUES ('Game Name', 'Game Description', '2022-01-01');", [name, description, release_date])];
+            return [2 /*return*/, prisma.games.create({
+                    data: {
+                        name: name,
+                        description: description,
+                        release_date: release_date
+                    }
+                })];
         });
     });
 }
@@ -47,35 +53,52 @@ function insertCategory(_a) {
     var name = _a.name, description = _a.description;
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_b) {
-            return [2 /*return*/, db.query("INSERT INTO categories (name, description) VALUES ( $1, $2);", [name, description])];
+            return [2 /*return*/, prisma.categories.create({
+                    data: {
+                        name: name,
+                        description: description
+                    }
+                })];
         });
     });
 }
 function relateGametoCategory(gameId, categoryId) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            return [2 /*return*/, db.query("INSERT INTO game_categories (game_id, category_id)\n        VALUES ($1, $2);", [gameId, categoryId])];
+            return [2 /*return*/, prisma.game_categories.create({
+                    data: {
+                        games: { connect: { id: gameId } },
+                        categories: { connect: { id: categoryId } }
+                    }
+                })];
         });
     });
 }
 function selectGame(gameId) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            return [2 /*return*/, db.query("SELECT games.*, \n        json_build_object('categories', json_agg(categories.name)) as categories\n        FROM games\n        JOIN game_categories ON games.id = game_categories.game_id\n        JOIN categories ON game_categories.category_id = categories.id\n        WHERE games.id = $1\n        GROUP BY games.id;", [gameId])];
+            return [2 /*return*/, prisma.games.findFirst({
+                    where: { id: gameId },
+                    include: { game_categories: { include: { categories: true } } }
+                })];
         });
     });
 }
 function deleteGame(gameId) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            return [2 /*return*/, db.query("DELETE FROM games WHERE id = $1", [gameId])];
+            return [2 /*return*/, prisma.games["delete"]({
+                    where: { id: gameId }
+                })];
         });
     });
 }
 function deleteCategory(categoryId) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            return [2 /*return*/, db.query("DELETE FROM categories WHERE id = $1", [categoryId])];
+            return [2 /*return*/, prisma.categories["delete"]({
+                    where: { id: categoryId }
+                })];
         });
     });
 }

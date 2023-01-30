@@ -1,4 +1,4 @@
-import prisma from "@/db/db";
+import prisma from "../config/db.js";
 
 async function insertGame({ name, description, release_date }: { name: string, description: string, release_date: string }) {
 
